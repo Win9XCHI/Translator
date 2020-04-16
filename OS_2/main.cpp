@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QLabel>
+#include "lexicalanalysis.h"
 
 int main(int argc, char *argv[])
 {
