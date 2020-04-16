@@ -20,6 +20,9 @@ void MainWindow::on_pushButton_2_clicked()
     QFileDialog dialog;
     QStringList fileNames;
 
+    LexicalAnalysis Object;
+    Object.Start("filename");
+
     if (dialog.exec())
     {
         fileNames = dialog.selectedFiles();

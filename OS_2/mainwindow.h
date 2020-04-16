@@ -11,6 +11,7 @@
 #include <QTextEdit>
 #include <QString>
 #include <QTextStream>
+#include "lexicalanalysis.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
