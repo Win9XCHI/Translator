@@ -18,17 +18,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    lexanalys.cpp \
     lexicalanalysis.cpp \
     main.cpp \
     mainwindow.cpp \
     projectbd.cpp
 
 HEADERS += \
+    lexanalys.h \
     lexicalanalysis.h \
     mainwindow.h \
     projectbd.h
 
 FORMS += \
+    lexanalys.ui \
     mainwindow.ui
 
 # Default rules for deployment.

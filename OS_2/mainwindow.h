@@ -12,6 +12,7 @@
 #include <QString>
 #include <QTextStream>
 #include "lexicalanalysis.h"
+#include "lexanalys.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,7 +31,13 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_pushButton_3_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
+
+//class lexanalys;
+//lexanalys *SecondWindow;
+
 #endif // MAINWINDOW_H

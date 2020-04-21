@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "lexanalys.h"
+#include "ui_lexanalys.h"
 
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
@@ -20,8 +21,8 @@ void MainWindow::on_pushButton_2_clicked()
     QFileDialog dialog;
     QStringList fileNames;
 
-    LexicalAnalysis Object;
-    Object.Start("filename");
+    //LexicalAnalysis Object;
+    //Object.Start("filename");
 
     if (dialog.exec())
     {
@@ -47,4 +48,13 @@ void MainWindow::on_pushButton_clicked()
         file.write(ui->textEdit->toPlainText().toUtf8());
         file.close();
     }
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    LexicalAnalysis Object;
+    Object.Start("C:/Qt Labs/OS_2/Example.txt");
+    lexanalys *tmp = new lexanalys();
+    tmp->show();
+
 }
