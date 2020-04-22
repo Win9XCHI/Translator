@@ -1,24 +1,24 @@
-#include "lexanalys.h"
-#include "ui_lexanalys.h"
+#include "identifier.h"
+#include "ui_identifier.h"
 
-lexanalys::lexanalys(QWidget *parent) :
+identifier::identifier(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::lexanalys)
+    ui(new Ui::identifier)
 {
     ui->setupUi(this);
 }
 
-lexanalys::~lexanalys()
+identifier::~identifier()
 {
     delete ui;
 }
 
-void lexanalys::on_pushButton_clicked()
+void identifier::on_pushButton_clicked()
 {
     LexicalAnalysis object;
     object.Start("C:/Qt Labs/OS_2/Example.txt");
 
-    std::list<Lex> listLex = object.GetLexical();
+    std::list<Lex> listLex = object.GetID();
 
     ui->tableWidget->setRowCount(listLex.size());
     ui->tableWidget->setColumnCount(3);

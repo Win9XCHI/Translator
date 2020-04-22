@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "lexanalys.h"
-#include "ui_lexanalys.h"
+#include "identifier.h"
 
 MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
@@ -52,9 +52,20 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    LexicalAnalysis Object;
-    Object.Start("C:/Qt Labs/OS_2/Example.txt");
+    //LexicalAnalysis object;
+    object.Start("C:/Qt Labs/OS_2/Example.txt");
     lexanalys *tmp = new lexanalys();
     tmp->show();
+}
 
+void MainWindow::on_pushButton_4_clicked()
+{
+    identifier *id = new identifier();
+    id->show();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    errors *err = new errors();
+    err->show();
 }

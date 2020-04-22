@@ -4,6 +4,8 @@
 #include <fstream>
 #include <list>
 #include "projectbd.h"
+#include <qmessagebox.h>
+
 
 class LexicalAnalysis {
 private:

@@ -102,6 +102,27 @@
        </widget>
       </item>
       <item>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>Лексический анализатор</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="text">
+         <string>Идентификатор</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_5">
+        <property name="text">
+         <string>Ошибки</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="pushButton">
         <property name="enabled">
          <bool>true</bool>
@@ -112,13 +133,6 @@
        </widget>
       </item>
      </layout>
-    </item>
-    <item>
-     <widget class="QPushButton" name="pushButton_3">
-      <property name="text">
-       <string>Лексический анализатор</string>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>

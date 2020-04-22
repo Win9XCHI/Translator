@@ -2,7 +2,8 @@
 #define LEXANALYS_H
 
 #include <QDialog>
-#include <QString>
+#include "lexicalanalysis.h"
+#include "mainwindow.h"
 
 namespace Ui {
 class lexanalys;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>lexanalys</class>
- <widget class="QDialog" name="lexanalys">
+ <class>errors</class>
+ <widget class="QDialog" name="errors">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,18 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Lexical analis</string>
+   <string>Errors</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTableWidget" name="tableWidget"/>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pushButton">
-     <property name="text">
-      <string>PushButton</string>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
