@@ -44,6 +44,11 @@ private:
     //Output: next char after Literals
     char Literals(char);
 
+    //Function for processing comments chars
+    //Input: char
+    //Output: next char after Literals
+    char Comment(char);
+
     //Function for initialization insert in database
     //Input: cade, name, type (lexems)
     //Output: -

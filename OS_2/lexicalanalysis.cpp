@@ -58,6 +58,9 @@ void LexicalAnalysis::Controller() {
         if (sizeWrite % 2 == 0) {
             file.get(symbol);
         }
+        if (symbol == '/') {
+            symbol = Comment(symbol);
+        }
         if (isalpha(symbol)) {
             symbol = ID(symbol);
         }
@@ -83,6 +86,24 @@ void LexicalAnalysis::Controller() {
         qDebug() << QString::fromStdString(error.front()) << endl;
         error.pop_front();
     }
+}
+
+char LexicalAnalysis::Comment(char symbol) {
+    try {
+        char buff[255];
+
+        file.get(symbol);
+        if (symbol != '/') {
+            throw "Error comments";
+        }
+
+        while (symbol != '\n') {
+            file.get(symbol);
+        }
+    } catch (std::string str) {
+        error.push_back(str);
+    }
+    return symbol;
 }
 
 char LexicalAnalysis::Literals(char symbol) {
