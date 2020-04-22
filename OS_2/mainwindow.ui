@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>352</height>
+    <height>367</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -98,6 +98,27 @@
        <widget class="QPushButton" name="pushButton_2">
         <property name="text">
          <string>Загрузить</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>Лексический анализатор</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="text">
+         <string>Идентификатор</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_5">
+        <property name="text">
+         <string>Ошибки</string>
         </property>
        </widget>
       </item>

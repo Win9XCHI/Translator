@@ -39,7 +39,6 @@ void LexicalAnalysis::Start(std::string filename) {
         if (!file.is_open()) {
             throw "System error: Not open file";
         }
-
         DB.DeleteRecord("ID");
         DB.DeleteRecord("Lex");
 
@@ -54,7 +53,6 @@ void LexicalAnalysis::Start(std::string filename) {
 void LexicalAnalysis::Controller() {
     char symbol = ' ';
     unsigned int sizeWrite = 0;
-
     while (symbol != EOF) {
 
         if (sizeWrite % 2 == 0) {

@@ -12,6 +12,8 @@
 #include <QString>
 #include <QTextStream>
 #include "lexicalanalysis.h"
+#include "lexanalys.h"
+#include "errors.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -25,12 +27,24 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    LexicalAnalysis object;
+
 private slots:
     void on_pushButton_2_clicked();
 
     void on_pushButton_clicked();
 
+    void on_pushButton_3_clicked();
+
+    void on_pushButton_4_clicked();
+
+    void on_pushButton_5_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
+
+//class lexanalys;
+//lexanalys *SecondWindow;
+
 #endif // MAINWINDOW_H
