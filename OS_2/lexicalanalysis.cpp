@@ -53,7 +53,7 @@ void LexicalAnalysis::Start(std::string filename) {
 void LexicalAnalysis::Controller() {
     char symbol = ' ';
     unsigned int sizeWrite = 0;
-    while (symbol != EOF) {
+    while (!file.eof()) { //fix
 
         if (sizeWrite % 2 == 0) {
             file.get(symbol);
@@ -90,7 +90,6 @@ void LexicalAnalysis::Controller() {
 
 char LexicalAnalysis::Comment(char symbol) {
     try {
-        char buff[255];
 
         file.get(symbol);
         if (symbol != '/') {
@@ -286,5 +285,9 @@ void LexicalAnalysis::Clear() {
     LastNumberLit = 1;
     LastNumberKey = 1;
     LastNumberDel = 1;
+}
+
+std::list<std::string> LexicalAnalysis::GetError() {
+    return error;
 }
 

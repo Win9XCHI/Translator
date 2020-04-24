@@ -10,6 +10,20 @@ struct Lex {
     std::string Code;
     std::string Name;
     std::string Type;
+
+    std::string operator [](int i) {
+        switch (i) {
+            case 0: {
+                return Code;
+            }
+            case 1: {
+                return Name;
+            }
+            case 2: {
+                return Type;
+            }
+        }
+    }
 };
 
 class ProjectBD {

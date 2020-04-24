@@ -22,7 +22,7 @@ void MainWindow::on_pushButton_2_clicked()
     QStringList fileNames;
 
     //LexicalAnalysis Object;
-    //Object.Start("filename");
+
 
     if (dialog.exec())
     {
@@ -30,6 +30,7 @@ void MainWindow::on_pushButton_2_clicked()
         ui->textEdit_2->setText(fileNames[0]);
 
         QFile file(fileNames[0]);
+        object.Start(fileNames[0].toStdString());
 
         if (file.open(QIODevice::ReadOnly))
         {
@@ -52,10 +53,9 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_3_clicked()
 {
-    //LexicalAnalysis object;
-    object.Start("C:/Qt Labs/OS_2/Example.txt");
     lexanalys *tmp = new lexanalys();
     tmp->show();
+    tmp->MyObject(&object); //send object LA to new form
 }
 
 void MainWindow::on_pushButton_4_clicked()
