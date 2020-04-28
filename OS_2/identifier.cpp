@@ -6,6 +6,7 @@ identifier::identifier(QWidget *parent) :
     ui(new Ui::identifier)
 {
     ui->setupUi(this);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 identifier::~identifier()
@@ -13,27 +14,27 @@ identifier::~identifier()
     delete ui;
 }
 
+void identifier::MyIdObject(LexicalAnalysis *object){ //object acceptance signal
+    this->object = object;
+}
+
 void identifier::on_pushButton_clicked()
 {
-    LexicalAnalysis object;
-    object.Start("C:/Qt Labs/OS_2/Example.txt");
-
-    std::list<Lex> listLex = object.GetID();
+    std::list<Lex> listLex = object->GetID();
 
     ui->tableWidget->setRowCount(listLex.size());
     ui->tableWidget->setColumnCount(3);
 
-    QTableWidgetItem *item = new QTableWidgetItem();
+    ui->tableWidget->horizontalHeaderItem(0)->setText("Code");
+    ui->tableWidget->horizontalHeaderItem(1)->setText("Name");
+    ui->tableWidget->horizontalHeaderItem(2)->setText("Type");
 
     for (int i = 0; i < ui->tableWidget->rowCount(); i++) {
-        item->setText(QString::fromStdString(listLex.front().Code));
-        ui->tableWidget->setItem(i,0,item);
-
-        item->setText(QString::fromStdString(listLex.front().Name));
-        ui->tableWidget->setItem(i,1,item);
-
-        item->setText(QString::fromStdString(listLex.front().Type));
-        ui->tableWidget->setItem(i,2,item);
+        for (int n = 0; n < ui->tableWidget->columnCount(); n++) {
+            QTableWidgetItem *item = new QTableWidgetItem();
+            item->setText(QString::fromStdString(listLex.front()[n])); //Lex has overload operator [] for 0 - Code, 1 - Name, 2 - Type
+                    ui->tableWidget->setItem(i,n,item);
+        }
 
         listLex.pop_front();
     }

@@ -1,0 +1,26 @@
+Example
+import
+	system.lib
+execute
+	ARRAY_INTEGER mas[];
+	
+	scan(mas);
+
+	i16 temp;
+
+	//dgfddfhdfhdf 
+	for i:low(mas)..high(mas) do
+		for j:low(mas)..high(mas) do
+			if mas[j] > mas[j + 1] then
+			temp = mas[j];
+			mas[j] = mas[j + 1];
+			mas[j + 1] = temp;
+			end
+		end
+	end
+	
+	print("Sorted array");
+
+	for i:low(mas)..high(mas) do
+		print(mas[i]);
+input;
