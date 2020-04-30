@@ -16,8 +16,15 @@ public:
     explicit errors(QWidget *parent = nullptr);
     ~errors();
 
+public slots:
+    void MyErrObject(LexicalAnalysis *); //accept LA
+
+private slots:
+    void on_pushButton_clicked();
+
 private:
     Ui::errors *ui;
+    LexicalAnalysis *object;//LA
 };
 
 #endif // ERRORS_H

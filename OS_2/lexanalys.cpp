@@ -6,6 +6,7 @@ lexanalys::lexanalys(QWidget *parent) :
     ui(new Ui::lexanalys)
 {
     ui->setupUi(this);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 }
 
 lexanalys::~lexanalys()
@@ -19,7 +20,6 @@ void lexanalys::MyObject(LexicalAnalysis *object){ //object acceptance signal
 
 void lexanalys::on_pushButton_clicked()
 {
-
     std::list<Lex> listLex = object->GetLexical();
 
     ui->tableWidget->setRowCount(listLex.size());

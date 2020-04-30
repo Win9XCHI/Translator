@@ -62,10 +62,12 @@ void MainWindow::on_pushButton_4_clicked()
 {
     identifier *id = new identifier();
     id->show();
+    id->MyIdObject(&object);
 }
 
 void MainWindow::on_pushButton_5_clicked()
 {
     errors *err = new errors();
     err->show();
+    err->MyErrObject(&object);
 }
