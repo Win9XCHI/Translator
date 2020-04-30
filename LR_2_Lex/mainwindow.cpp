@@ -21,9 +21,6 @@ void MainWindow::on_pushButton_2_clicked()
     QFileDialog dialog;
     QStringList fileNames;
 
-    //LexicalAnalysis Object;
-
-
     if (dialog.exec())
     {
         fileNames = dialog.selectedFiles();

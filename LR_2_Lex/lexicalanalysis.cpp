@@ -52,39 +52,44 @@ void LexicalAnalysis::Start(std::string filename) {
 
 void LexicalAnalysis::Controller() {
     char symbol = ' ';
-    unsigned int sizeWrite = 0;
-    while (!file.eof()) { //fix
+    bool flag = false;
 
-        if (sizeWrite % 2 == 0) {
+    while (!file.eof()) {
+
+        if (!flag) {
             file.get(symbol);
         }
         if (symbol == '/') {
             symbol = Comment(symbol);
+            flag = true;
         }
         if (isalpha(symbol)) {
             symbol = ID(symbol);
+            flag = true;
         }
         if (symbol == '.' || symbol == ':' || symbol == '+' || symbol == '-' || symbol == '=' || symbol == '!' || symbol == '<' || symbol == '>' || symbol == '&' || symbol == '|' || symbol == '^') {
             symbol = Operation(symbol);
+            flag = true;
         }
         if (isdigit(symbol) || symbol == '"' || symbol == '\'') {
             symbol = Literals(symbol);
+            flag = true;
         }
         if (Check_endLex(symbol)) {
-            if (sizeWrite % 2 == 0) {
-                continue;
-            }
+            flag = false;
         }
-        sizeWrite++;
     }
 
     if (countForFunc != 0 || countForArray != 0) {
-        error.push_back("Parentheses mismatch");
-    }
+        char c[5];
+        std::string str = "Parentheses mismatch: Func: ";
+        itoa(countForFunc, c, 10);
+        str += c;
+        str += ", Array: ";
+        itoa(countForArray, c, 10);
+        str += c;
 
-    while (!error.empty()) {
-        qDebug() << QString::fromStdString(error.front()) << endl;
-        error.pop_front();
+        error.push_back(str);
     }
 }
 
@@ -112,7 +117,12 @@ char LexicalAnalysis::Literals(char symbol) {
     while (true) {
         file.get(symbol);
 
-        if (symbol == '\'' || symbol == '"' || Check_endLex(symbol)) {
+        if ((str[0] == '\'' && symbol == '\'') || (str[0] == '"' && symbol == '"')) {
+            str.push_back(symbol);
+            file.get(symbol);
+            break;
+        }
+        if (Check_endLex(symbol, false) && str[0] != '\'' && str[0] != '"') {
             break;
         }
         str.push_back(symbol);
@@ -123,30 +133,28 @@ char LexicalAnalysis::Literals(char symbol) {
     return symbol;
 }
 
-bool LexicalAnalysis::Check_endLex(char symbol) {
+bool LexicalAnalysis::Check_endLex(char symbol, bool flag) {
     std::string str;
     str.push_back(symbol);
 
     if (Delimiters.find(str) != Delimiters.cend() || symbol == '\n' || symbol == '\t') {
 
-        if (symbol != ' ' && symbol != '\n' && symbol != '\t' && symbol != '[' && symbol != '(') {
-            std::string str;
-            str.push_back(symbol);
+        if(symbol == ';' || symbol == ',') {
             InitialInsert("D" + QString::number(LastNumberDel), QString::fromStdString(str), "Delimiter");
         }
 
-        if (symbol == '[') {
+        if (symbol == '[' && flag) {
             InitialInsert("O" + QString::number(LastNumberOp), QString::fromStdString(str), "Operation");
             countForArray++;
         }
-        if (symbol == ']') {
+        if (symbol == ']' && flag) {
             countForArray--;
         }
-        if (symbol == '(') {
+        if (symbol == '(' && flag) {
             InitialInsert("O" + QString::number(LastNumberOp), QString::fromStdString(str), "Operation");
             countForFunc++;
         }
-        if (symbol == ')') {
+        if (symbol == ')' && flag) {
             countForFunc--;
         }
         return true;
@@ -237,7 +245,7 @@ char LexicalAnalysis::ID(char symbol) {
     while (true) {
         file.get(symbol);
 
-        if (isalpha(symbol) || symbol == '_' || isdigit(symbol)/* || (symbol == '.' && !isdigit(str[str.size() - 1]))*/) {
+        if (isalpha(symbol) || symbol == '_' || isdigit(symbol)) {
             str.push_back(symbol);
         } else {
             break;
@@ -246,7 +254,11 @@ char LexicalAnalysis::ID(char symbol) {
     if (Check_key_words(str)) {
         InitialInsert("X" + QString::number(LastNumberKey), QString::fromStdString(str), "Key_Word");
     } else {
-        InitialInsert(QString::number(LastNumberId), QString::fromStdString(str), "ID");
+        if (Check16Digit(str)) {
+            InitialInsert("L" + QString::number(LastNumberLit), QString::fromStdString(str), "Literal");
+        } else {
+            InitialInsert(QString::number(LastNumberId), QString::fromStdString(str), "ID");
+        }
     }
 
     return symbol;
@@ -269,8 +281,8 @@ std::list<Lex> LexicalAnalysis::GetLexical() {
 
 std::list<Lex> LexicalAnalysis::GetID() {
     std::list<Lex> object;
-    DB.SELECT("Code, Name, Type", "Lex");
-    DB.GetLex(object);
+    DB.SELECT("Code, Name, Key", "ID");
+    DB.GetID(object);
 
     return object;
 }
@@ -289,5 +301,20 @@ void LexicalAnalysis::Clear() {
 
 std::list<std::string> LexicalAnalysis::GetError() {
     return error;
+}
+
+bool LexicalAnalysis::Check16Digit(const std::string str) {
+    if (str[str.size() - 1] != 'h') {
+        return false;
+    }
+
+    for (unsigned int i = 0; i < str.size() - 1; i++) {
+
+        if (!isxdigit(str[i])) {
+            return false;
+        }
+    }
+
+    return true;
 }
 

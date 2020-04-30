@@ -104,14 +104,14 @@
       <item>
        <widget class="QPushButton" name="pushButton_3">
         <property name="text">
-         <string>Лексический анализатор</string>
+         <string>Лексемы</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_4">
         <property name="text">
-         <string>Идентификатор</string>
+         <string>Идентификаторы</string>
         </property>
        </widget>
       </item>
@@ -142,7 +142,7 @@
      <x>0</x>
      <y>0</y>
      <width>583</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
   </widget>

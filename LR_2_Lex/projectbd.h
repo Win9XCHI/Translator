@@ -23,6 +23,7 @@ struct Lex {
                 return Type;
             }
         }
+        return "";
     }
 };
 
@@ -61,6 +62,11 @@ public:
     //Input: container for save records
     //Output: container for save records
     void GetLex(std::list<Lex>&);
+
+    //Return records from table "ID"
+    //Input: container for save records
+    //Output: container for save records
+    void GetID(std::list<Lex>&);
 
     //Return record from table "Lex"
     //Input: -

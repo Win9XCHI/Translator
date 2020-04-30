@@ -16,10 +16,7 @@ lexanalys::~lexanalys()
 
 void lexanalys::MyObject(LexicalAnalysis *object){ //object acceptance signal
     this->object = object;
-}
 
-void lexanalys::on_pushButton_clicked()
-{
     std::list<Lex> listLex = object->GetLexical();
 
     ui->tableWidget->setRowCount(listLex.size());

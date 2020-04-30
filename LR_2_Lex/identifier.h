@@ -18,10 +18,7 @@ public:
     ~identifier();
 
 public slots:
-    void MyIdObject(LexicalAnalysis *); //accept LA
-
-private slots:
-    void on_pushButton_clicked();
+    void MyIdObject(LexicalAnalysis *);
 
 private:
     Ui::identifier *ui;

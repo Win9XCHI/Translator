@@ -18,11 +18,7 @@ public:
     ~lexanalys();
 
 public slots:
-    void MyObject(LexicalAnalysis *); //accept LA
-
-private slots:
-    void on_pushButton_clicked();
-
+    void MyObject(LexicalAnalysis *);
 
 private:
     Ui::lexanalys *ui;
