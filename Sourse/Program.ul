@@ -11,11 +11,13 @@ execute
 		for j:low(mas)..high(mas) do
 			if mas[j] > mas[j + 1] then
 			temp = mas[j];
-			mas[j] = mas[j + 1];
+			mas[j] = mas[j + 1];]
 			mas[j + 1] = temp;
 			end
 		end
 	end
+
+	u = A10h;
 	
 	print("Sorted array");
 

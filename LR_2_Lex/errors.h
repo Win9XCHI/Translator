@@ -17,10 +17,7 @@ public:
     ~errors();
 
 public slots:
-    void MyErrObject(LexicalAnalysis *); //accept LA
-
-private slots:
-    void on_pushButton_clicked();
+    void MyErrObject(LexicalAnalysis *);
 
 private:
     Ui::errors *ui;

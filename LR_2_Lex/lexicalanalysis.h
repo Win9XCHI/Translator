@@ -4,8 +4,7 @@
 #include <fstream>
 #include <list>
 #include "projectbd.h"
-#include <qmessagebox.h>
-
+#include <cstdlib>
 
 class LexicalAnalysis {
 private:
@@ -60,9 +59,14 @@ private:
     bool Check_key_words(const std::string);
 
     //Function for check end lexems
-    //Input: char
+    //Input: char, do parentheses count
     //Output: end or not
-    bool Check_endLex(char);
+    bool Check_endLex(char, bool = true);
+
+    //Function for check ID on hexadecimal digit
+    //Input: ID
+    //Output: there any matches
+    bool Check16Digit(const std::string);
 
 public:
     LexicalAnalysis();

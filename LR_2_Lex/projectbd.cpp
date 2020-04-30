@@ -147,6 +147,19 @@ void ProjectBD::GetLex(std::list<Lex> &cont) {
     }
 }
 
+void ProjectBD::GetID(std::list<Lex> &cont) {
+    QSqlRecord rec = query.record();
+    Lex object;
+
+    while(query.next()) {
+        object.Code = query.value(rec.indexOf("Code")).toString().toStdString();
+        object.Name = query.value(rec.indexOf("Name")).toString().toStdString();
+        object.Type = query.value(rec.indexOf("Key")).toString().toStdString();
+
+        cont.push_back(object);
+    }
+}
+
 QString ProjectBD::Check_Name() {
     QSqlRecord rec = query.record();
     query.next();
