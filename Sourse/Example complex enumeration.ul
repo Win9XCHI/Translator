@@ -1,0 +1,21 @@
+Example
+import
+	system.lib
+execute
+	//function
+	winter : enum (dec jan feb)
+	spring : enum (mar apr may)
+	summer : enum (jun jul aug)
+	autumn : enum (sep oct nov)
+
+	month : enum (winter + spring + summer + autumn)
+
+	m : month = jun;
+
+	if m in winter then print('Winer month'); else
+	if m in spring then print('Spring month'); else
+	if m in summer then print('Summer month'); else
+	print('Autumn month');
+
+	end
+input;
