@@ -1,0 +1,12 @@
+Example
+import
+	system.lib
+execute
+	//function
+	Test : func(const X:i64) : i32 do 
+		ret(X*X); 
+		print(X);
+	end
+	
+	Test(2.5);
+input;

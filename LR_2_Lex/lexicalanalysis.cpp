@@ -67,7 +67,7 @@ void LexicalAnalysis::Controller() {
             symbol = ID(symbol);
             flag = true;
         }
-        if (symbol == '.' || symbol == ':' || symbol == '+' || symbol == '-' || symbol == '=' || symbol == '!' || symbol == '<' || symbol == '>' || symbol == '&' || symbol == '|' || symbol == '^') {
+        if (symbol == '.' || symbol == '+' || symbol == '-' || symbol == '=' || symbol == '!' || symbol == '<' || symbol == '>' || symbol == '&' || symbol == '|' || symbol == '^') {
             symbol = Operation(symbol);
             flag = true;
         }
@@ -139,19 +139,17 @@ bool LexicalAnalysis::Check_endLex(char symbol, bool flag) {
 
     if (Delimiters.find(str) != Delimiters.cend() || symbol == '\n' || symbol == '\t') {
 
-        if(symbol == ';' || symbol == ',') {
+        if((symbol != '.' && symbol != '\n' && symbol != '\t' && symbol != ' ') && flag) {
             InitialInsert("D" + QString::number(LastNumberDel), QString::fromStdString(str), "Delimiter");
         }
 
         if (symbol == '[' && flag) {
-            InitialInsert("O" + QString::number(LastNumberOp), QString::fromStdString(str), "Operation");
             countForArray++;
         }
         if (symbol == ']' && flag) {
             countForArray--;
         }
         if (symbol == '(' && flag) {
-            InitialInsert("O" + QString::number(LastNumberOp), QString::fromStdString(str), "Operation");
             countForFunc++;
         }
         if (symbol == ')' && flag) {
@@ -181,10 +179,14 @@ char LexicalAnalysis::Operation(char symbol) {
         if (str.size() > 2) {
             throw "Invalid operator: " + str;
         }
-        if (Operations.find(str) == Operations.cend()) {
+        if (Operations.find(str) == Operations.cend() && str != ".." && str != ".") {
             throw "Invalid operator: " + str;
         }
-        InitialInsert("O" + QString::number(LastNumberOp), QString::fromStdString(str), "Operation");
+        if (str == ".." || str == ".") {
+            InitialInsert("D" + QString::number(LastNumberDel), QString::fromStdString(str), "Delimiter");
+        } else {
+            InitialInsert("O" + QString::number(LastNumberOp), QString::fromStdString(str), "Operation");
+        }
 
     } catch (std::string str) {
         error.push_back(str);
