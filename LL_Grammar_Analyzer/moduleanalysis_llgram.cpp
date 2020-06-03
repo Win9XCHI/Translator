@@ -1,14 +1,9 @@
 #include "moduleanalysis_llgram.h"
 #include <iostream>
 
-ModuleAnalysis_LLGram::ModuleAnalysis_LLGram()
-{
+ModuleAnalysis_LLGram::ModuleAnalysis_LLGram() {}
 
-}
-
-ModuleAnalysis_LLGram::~ModuleAnalysis_LLGram() {
-
-}
+ModuleAnalysis_LLGram::~ModuleAnalysis_LLGram() {}
 
 void ModuleAnalysis_LLGram::ConstructRules() {
     vector<string> words;
@@ -155,6 +150,8 @@ void ModuleAnalysis_LLGram::ParsingTable() {
 
     try {
         cout << endl << "Count: " << Numbering(Grammar["Entry"][0]);
+
+        cout << "";
 
     } catch (...) {
         cout << endl << "End. Error!";
