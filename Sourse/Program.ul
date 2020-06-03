@@ -23,4 +23,5 @@ execute
 
 	for i:low(mas)..high(mas) do
 		print(mas[i]);
-input;
+		input;
+	end
