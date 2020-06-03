@@ -16,9 +16,11 @@ struct Part {
 class ModuleAnalysis_LLGram {
     map<string, vector<string>> Grammar;
     map<string, vector<vector<Part>>> Rules;
+    vector<Part> VectorRules;
 
     void ConstructRules();
     unsigned int Numbering(string str, unsigned int number = 1);
+    void SortRules();
 
     template <class Container>
     static void split3(const std::string& str, Container& cont, char delim = ' ');
