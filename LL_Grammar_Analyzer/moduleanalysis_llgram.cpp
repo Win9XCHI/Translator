@@ -75,6 +75,8 @@ bool ModuleAnalysis_LLGram::CheckGrammar() {
 
 }
 
+void SortRules();
+
 unsigned int ModuleAnalysis_LLGram::Numbering(string str, unsigned int number) {
 
     try {
