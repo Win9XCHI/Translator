@@ -12,17 +12,39 @@ using namespace std;
 struct Part {
     string Name;
     unsigned int number;
+
+    Part() : Name(""), number(0) {}
 };
 
-class ModuleAnalysis_LLGram {
+class ModuleAnalysis_LLGram{
+    ProjectBD DB;
     map<string, vector<string>> Grammar;
     map<string, vector<vector<Part>>> Rules;
+    unsigned int num;
     vector<Part> VectorRules;
-    ProjectBD DB;
 
     void ConstructRules();
     unsigned int Numbering(string str, unsigned int number = 1);
+    void FillingTable(Part, unsigned int &);
+    bool CheckTerminal(string);
+    bool CheckLocationNo_Term(string, unsigned int);
     void SortRules();
+    Part SearchTerm(string, unsigned int, unsigned int);
+
+    void ModuleLeft(Part, unsigned int &);
+    void ModuleE(Part, unsigned int &);
+    void ModuleTerminal(Part);
+    void ModuleNoTerminal(Part, unsigned int &);
+    QString SearchTerminalE(unsigned int);
+    Part GetNext(unsigned int);
+    void InsertRecord(unsigned int, QString, unsigned int, bool, unsigned int, bool, bool);
+
+    bool SearchArrayEmpty(vector<bool> &);
+
+    Part NextTerm(string, unsigned int);
+    string CheckNext(unsigned int);
+    unsigned int CountVariants(string);
+    Part e(vector<unsigned int>);
 
     template <class Container>
     static void split3(const std::string& str, Container& cont, char delim = ' ');
@@ -36,6 +58,8 @@ public:
     bool CheckGrammar();
 
     void ParsingTable();
+
+    void ControlOutputVectorRules();
 };
 
 

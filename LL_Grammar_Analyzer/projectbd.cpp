@@ -222,5 +222,23 @@ void ProjectBD::CREATE_TABLE(QString table_name, std::vector<std::vector<QString
     query.prepare("CREATE TABLE " + table_name + "( " + body + " );");
 }
 
+void ProjectBD::DROP(QString table_name) {
+    query.prepare("DROP TABLE " + table_name + ";");
+}
 
+void ProjectBD::GetStackNumber(std::vector<int> &cont) {
+    QSqlRecord rec = query.record();
 
+    while(query.next()) {
+        int number = query.value(rec.indexOf("Stack_In")).toInt();
+
+        if (number != 0) {
+            cont.push_back(number);
+        }
+    }
+}
+
+QString ProjectBD::GetTerminal() {
+    QSqlRecord rec = query.record();
+    return query.value(rec.indexOf("Terminal")).toString();
+}

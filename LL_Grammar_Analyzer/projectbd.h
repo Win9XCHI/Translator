@@ -97,6 +97,10 @@ public:
     //Input: table name, array: name, type and rule for columns
     //Output: -
     void CREATE_TABLE(QString, std::vector<std::vector<QString>>);
+    void DROP(QString);
+
+    void GetStackNumber(std::vector<int> &);
+    QString GetTerminal();
 };
 
 #endif // PROJECTBD_H
