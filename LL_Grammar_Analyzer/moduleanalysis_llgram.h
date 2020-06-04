@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <fstream>
 #include <iterator>
+#include "projectbd.h"
 
 using namespace std;
 
@@ -17,6 +18,7 @@ class ModuleAnalysis_LLGram {
     map<string, vector<string>> Grammar;
     map<string, vector<vector<Part>>> Rules;
     vector<Part> VectorRules;
+    ProjectBD DB;
 
     void ConstructRules();
     unsigned int Numbering(string str, unsigned int number = 1);

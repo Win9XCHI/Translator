@@ -93,6 +93,10 @@ public:
     //Output: Query done or not
     bool Insert(QString, std::vector<QString>, std::vector<QString>);
 
+    //Create new table
+    //Input: table name, array: name, type and rule for columns
+    //Output: -
+    void CREATE_TABLE(QString, std::vector<std::vector<QString>>);
 };
 
 #endif // PROJECTBD_H

@@ -204,5 +204,23 @@ bool ProjectBD::Insert(QString table_name, std::vector<QString> listColumns, std
     return flag;
 }
 
+void ProjectBD::CREATE_TABLE(QString table_name, std::vector<std::vector<QString>> columns) {
+    QString body;
+
+    for (unsigned int i = 0; i < columns.size(); i++) {
+
+        for (unsigned int n = 0; n < columns[i].size(); n++) {
+
+            body += columns[i][n] + " ";
+        }
+
+        if (i != columns.size() - 1) {
+            body += ", ";
+        }
+    }
+
+    query.prepare("CREATE TABLE " + table_name + "( " + body + " );");
+}
+
 
 

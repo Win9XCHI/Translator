@@ -2,4 +2,3 @@ build-OS_2-Desktop_Qt_5_13_2_MinGW_32_bit-Debug/
 build-LR_3_Syntax-Desktop_Qt_5_13_2_MinGW_32_bit-Debug/
 build-LL_Grammar_Analyzer-Desktop_Qt_5_13_2_MinGW_32_bit-Debug/
 *.user
-*.pro
