@@ -6,11 +6,11 @@ int main() {
 
     Ob.UploadGrammar("ExampleGrammar.ul");
 
+    //Ob.CheckGrammar(); fail
+
     Ob.ParsingTable();
 
     Ob.ControlOutputVectorRules();
-
-    Ob.ParsingTable();
 
     return 0;
 }

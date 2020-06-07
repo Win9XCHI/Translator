@@ -29,7 +29,7 @@ class ModuleAnalysis_LLGram{
     bool CheckTerminal(string);
     bool CheckLocationNo_Term(string, unsigned int);
     void SortRules();
-    Part SearchTerm(string, unsigned int, unsigned int);
+    Part SearchTerm(string, unsigned int, int);
 
     void ModuleLeft(Part, unsigned int &);
     void ModuleE(Part, unsigned int &);
@@ -39,7 +39,10 @@ class ModuleAnalysis_LLGram{
     Part GetNext(unsigned int);
     void InsertRecord(unsigned int, QString, unsigned int, bool, unsigned int, bool, bool);
 
-    bool SearchArrayEmpty(vector<bool> &);
+    string PartFollowing(unsigned int, vector<Part>);
+    void Following(string, map<string, map<string, bool>> &, map<string, map<string, bool>>);
+    map<string, bool> SearchPredecessors(string, map<string, bool>);
+    bool SearchEmpty(string, string);
 
     Part NextTerm(string, unsigned int);
     string CheckNext(unsigned int);

@@ -69,56 +69,197 @@ void ModuleAnalysis_LLGram::UploadGrammar(string path) {
     Grammar["Entry"] = Entry;
 
     ConstructRules();
+    num = Numbering(Grammar["Entry"][0]);
 
     file.close();
 }
 
-/*bool ModuleAnalysis_LLGram::SearchArrayEmpty(vector<bool> &SearchEmpty) {
-
-    for (pair<string, vector<vector<Part>>> item : Rules) {
-
-        for (unsigned int n = 0; n < item.second.size(); n++) {
-
-            for (unsigned int t = 0; t < item.second[n].size(); t++) {
-
-                if (!CheckTerminal(item.second[n][t].Name) && item.second[n][t].Name != "e") {
-                    SearchEmpty.push_back(SearchArrayEmpty(SearchEmpty, ));
-                }
-
-                if (item.second[n][t].Name == "e" && t == item.second[n].size() - 1) {
-
-                    SearchEmpty.push_back(true);
-                }
-            }
-        }
-
-
-    }
-
-    return false;
-}*/
-
+//very bad, it created only two tables
 bool ModuleAnalysis_LLGram::CheckGrammar() {
     DB.DROP("DataVector");
     DB.DROP("MatrixPredecessors");
     DB.DROP("MatrixFollowing");
 
-    vector<std::vector<QString>> columns;
+    map<string, bool> columns;
+    map<string, map<string, bool>> MatrixPredecessors, MatrixFollowing;
+    //vector<QString> columnsName;
+    //vector<QString> SEmpty;
 
-
-    for (pair<string, vector<vector<Part>>> item : Rules) {
-        vector<QString> str;
-        str.push_back(QString::fromStdString(item.first));
-        str.push_back("BOOLEAN");
-        str.push_back("");
-
-        columns.push_back(str);
+    map<string, bool> pattern;
+    for (unsigned int i = 0; i < Grammar["No_Terminal"].size(); i++) {
+        pattern[Grammar["No_Terminal"][i]] = false;
+    }
+    for (unsigned int i = 0; i < Grammar["Terminal"].size(); i++) {
+        pattern[Grammar["Terminal"][i]] = false;
     }
 
-    DB.CREATE_TABLE("DataVector", columns);
+    for (pair<string, vector<vector<Part>>> item : Rules) {
+        //vector<QString> str;
+        //SEmpty.push_back();
+        //str.push_back(QString::fromStdString(item.first));
+        //columnsName.push_back(QString::fromStdString(item.first));
+        //str.push_back("BOOLEAN");
+        //str.push_back("");
+
+        //columns.push_back(str);
+        columns[item.first] = SearchEmpty(item.first, "0");
+        MatrixPredecessors[item.first] = SearchPredecessors(item.first, pattern); //Search connect
+    }
+    cout << endl;
+    for (pair<string, bool> item : columns) {
+        cout << item.first << " -> " << item.second;
+        cout << endl;
+    }
+
     columns.clear();
 
-    vector<bool> SearchEmpty;
+    for (pair<string, map<string, bool>> item : MatrixPredecessors) {
+
+        for (pair<string, bool> item2Level : item.second) {
+
+            if (item2Level.second == true) {
+                auto it = MatrixPredecessors.find(item2Level.first);
+
+                for (pair<string, bool> i : it->second) {
+
+                    if (i.second == true) {
+                        auto place = item.second.find(i.first);
+                        place->second = true;
+                    }
+                }
+            }
+        }
+    }
+
+    Following("PROGRAM", MatrixFollowing, MatrixPredecessors);
+
+    for (pair<string, bool> item : pattern) {
+        cout << item.first << " | ";
+    }
+    cout << endl;
+    for (pair<string, map<string, bool>> item : MatrixPredecessors) {
+        cout << item.first << "   | ";
+        for (pair<string, bool> item2Level : item.second) {
+            cout << item2Level.second << " | ";
+        }
+        cout << endl;
+    }
+
+    cout << endl;
+
+    //DB.CREATE_TABLE("DataVector", columns);
+    /*columns.clear();
+
+    cout << endl;
+    for (unsigned int i = 0; i < columnsName.size(); i++) {
+        qDebug() << i+1 << ". " << columnsName[i] << " -> " << SEmpty[i];
+    }*/
+    //DB.Insert("DataVector", columnsName, SEmpty);
+
+
+}
+//n, item->second[i],
+string ModuleAnalysis_LLGram::PartFollowing(unsigned int n, vector<Part> item) {
+    for (unsigned int t = n; t < item.size(); t++) {
+
+        if (CheckTerminal(item[t].Name)) {
+            return "";
+        }
+        if (!SearchEmpty(item[t].Name, "0")) {
+           return item[t].Name;
+        }
+    }
+
+    return "";
+}
+
+void ModuleAnalysis_LLGram::Following(string str, map<string, map<string, bool>> &matrix, map<string, map<string, bool>> PrevMatrix) {
+    auto item = Rules.find(str);
+
+    for (unsigned int i = 0; i < item->second.size(); i++) {
+
+        for (unsigned int n = 1; n < item->second[i].size(); n++) {
+
+            if (!CheckTerminal(item->second[i][n].Name)) {
+                string next = PartFollowing(n, item->second[i]);
+
+                if (next != "") {
+                    matrix[item->second[i][n].Name][next] = true;
+
+                    auto itemFromPrevMatrix = PrevMatrix.find(next);
+
+                    for (pair<string, bool> item2Level : itemFromPrevMatrix->second) {
+
+                        if (item2Level.second) {
+                            matrix[item->second[i][n].Name][item2Level.first] = true;
+                        }
+                    }
+                }
+            }
+            /*if (n != item->second[i].size() - 1) {
+
+                if (!CheckTerminal(item->second[i][n].Name) && !SearchEmpty(item->second[i][n + 1].Name, "0")) {
+                    matrix[item->second[i][n].Name][item->second[i][n + 1].Name] = true;
+
+                    auto itemFromPrevMatrix = PrevMatrix.find(item->second[i][n + 1].Name);
+
+                    for (pair<string, bool> item2Level : itemFromPrevMatrix->second) {
+
+                        if (item2Level.second) {
+                            matrix[item->second[i][n].Name][item2Level.first] = true;
+                        }
+                    }
+                }
+
+                if (!CheckTerminal(item->second[i][n].Name) && SearchEmpty(item->second[i][n + 1].Name, "0")) {
+
+                }
+
+
+            } else {
+
+            }*/
+        }
+    }
+}
+
+map<string, bool> ModuleAnalysis_LLGram::SearchPredecessors(string str, map<string, bool> pattern) {
+    auto item = Rules.find(str);
+
+    for (unsigned int i = 0; i < item->second.size(); i++) {
+
+        for (unsigned int n = 1; n < item->second[i].size(); n++) {
+
+            pattern[item->second[i][n].Name] = true;
+            if (CheckTerminal(item->second[i][n].Name) || !SearchEmpty(item->second[i][n].Name, "0")) {
+                break;
+            }
+        }
+    }
+
+    return pattern;
+}
+
+bool ModuleAnalysis_LLGram::SearchEmpty(string str, string prevStr) {
+    auto item = Rules.find(str);
+    bool flag = false;
+
+    for (unsigned int i = 0; i < item->second.size(); i++) {
+
+        if (CheckTerminal(item->second[i][item->second[i].size() - 1].Name)) {
+            continue;
+        }
+
+        if (item->second[i][item->second[i].size() - 1].Name == "e") {
+            return true;
+        }
+
+        if (!CheckTerminal(item->second[i][item->second[i].size() - 1].Name) && item->second[i][item->second[i].size() - 1].Name != str && item->second[i][item->second[i].size() - 1].Name != prevStr) {
+            flag = SearchEmpty(item->second[i][item->second[i].size() - 1].Name, str);
+        }
+    }
+
+    return flag;
 }
 
 void ModuleAnalysis_LLGram::SortRules() {
@@ -214,8 +355,6 @@ bool ModuleAnalysis_LLGram::CheckLocationNo_Term(string str, unsigned int number
 
 string ModuleAnalysis_LLGram::CheckNext(unsigned int number) {
 
-    for (unsigned int i = 0; i < num; i++) {
-
         for (pair<string, vector<vector<Part>>> item : Rules) {
 
             for (unsigned int n = 0; n < item.second.size(); n++) {
@@ -238,14 +377,11 @@ string ModuleAnalysis_LLGram::CheckNext(unsigned int number) {
                 }
             }
         }
-    }
 
     throw "CheckNext";
 }
 
 Part ModuleAnalysis_LLGram::GetNext(unsigned int number) {
-
-    for (unsigned int i = 0; i < num; i++) {
 
         for (pair<string, vector<vector<Part>>> item : Rules) {
 
@@ -255,12 +391,22 @@ Part ModuleAnalysis_LLGram::GetNext(unsigned int number) {
 
                     if (item.second[n][t].number == number) {
 
-                        return item.second[n][t];
+                        if(!CheckTerminal(item.second[n][t].Name) && t != 0) {
+                            auto it = Rules.find(item.second[n][t].Name);
+                            return it->second[0][0];
+                        }
+
+                        if (t != item.second[n].size() - 1) {
+                            return item.second[n][t + 1];
+                        }
+
+                        if (t == item.second[n].size() - 1) {
+                            return Part();
+                        }
                     }
                 }
             }
         }
-    }
 
     throw "CheckNext";
 }
@@ -275,21 +421,17 @@ unsigned int ModuleAnalysis_LLGram::CountVariants(string str) {
     return 0;
 }
 
-Part ModuleAnalysis_LLGram::SearchTerm(string str, unsigned int number, unsigned int i) {
+Part ModuleAnalysis_LLGram::SearchTerm(string str, unsigned int number, int i) {
     auto item = Rules.find(str);
 
-    for (unsigned int n = 0; n < item->second.size(); n++) {
-
-        if (item->second[n][0].number == number) {
-
-            if (CheckTerminal(item->second[n][i + 1].Name) || item->second[n][i + 1].Name == "e") {
-                 return item->second[n][i + 1];
-             }
-
-            return SearchTerm(item->second[n][i + 1].Name, item->second[n][i + 1].number, i);
-
-        }
+    if (i == -1) {
+        return item->second[0][0];
     }
+    if (CheckTerminal(item->second[i][number].Name) || item->second[i][number].Name == "e") {
+          return item->second[i][number];
+    }
+
+   return SearchTerm(item->second[i][number + 1].Name, number + 1, i);
 
     return Part();
 }
@@ -335,7 +477,7 @@ void ModuleAnalysis_LLGram::InsertRecord(unsigned int number, QString Terminal, 
 void ModuleAnalysis_LLGram::ModuleLeft(Part Ob, unsigned int &Stack_pointer) {
     bool Accept = false, Stack_Out = false, Error = true;
     QString Terminal;
-    unsigned int Route, Stack_In = 0;
+    unsigned int Route(-1), Stack_In = 0;
 
     Part next = GetNext(Ob.number); //not next
 
@@ -399,12 +541,12 @@ void ModuleAnalysis_LLGram::ModuleNoTerminal(Part Ob, unsigned int &Stack_pointe
         throw "Zero";
     }
 
-    Route = SearchTerm(Ob.Name, Ob.number, 0).number;
+    Route = SearchTerm(Ob.Name, GetNext(Ob.number).number, -1).number;
 
     for (unsigned int i = 0; i < count; i++) {
-        QString str = QString::fromStdString(SearchTerm(Ob.Name, Ob.number, i).Name);
+        QString str = QString::fromStdString(SearchTerm(Ob.Name, 1, i).Name);
 
-        if (str.indexOf("e") != -1) {
+        if (str == "e") {
             Terminal += SearchTerminalE(Stack_pointer) + " ";
         } else {
             Terminal += str + " ";
@@ -442,7 +584,6 @@ void ModuleAnalysis_LLGram::ParsingTable() {
 
     try {
         DB.DeleteRecord("ParsingTable");
-        num = Numbering(Grammar["Entry"][0]);
 
         SortRules();
 
