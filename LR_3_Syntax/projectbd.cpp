@@ -206,3 +206,38 @@ bool ProjectBD::Insert(QString table_name, std::vector<QString> listColumns, std
 
 
 
+//--------------
+
+QString ProjectBD::GetMaxNumber() {
+    QSqlRecord rec = query.record();
+    query.next();
+    return query.value(rec.indexOf("Max")).toString();
+}
+
+Lex ProjectBD::GetLex() {
+    QSqlRecord rec = query.record();
+    Lex object;
+
+    query.next();
+    object.Code = query.value(rec.indexOf("Code")).toString().toStdString();
+    object.Name = query.value(rec.indexOf("Name")).toString().toStdString();
+    object.Type = query.value(rec.indexOf("Type")).toString().toStdString();
+
+    return object;
+}
+
+RecordParsingTable ProjectBD::GetTerminal() {
+    QSqlRecord rec = query.record();
+    RecordParsingTable object;
+
+    query.next();
+    object.NumberRecord = query.value(rec.indexOf("Number")).toString().toInt();
+    object.Terminal = query.value(rec.indexOf("Terminal")).toString().toStdString();
+    object.Route = query.value(rec.indexOf("Route")).toString().toInt();
+    object.Accept = query.value(rec.indexOf("Accept")).toString().toInt();
+    object.Stack_In = query.value(rec.indexOf("Stack_In")).toString().toInt();
+    object.Stack_Out = query.value(rec.indexOf("Stack_Out")).toString().toInt();
+    object.Error = query.value(rec.indexOf("Error")).toString().toInt();
+
+    return object;
+}
