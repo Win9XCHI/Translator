@@ -1,47 +1,27 @@
-#ifndef PROJECTBD_H
-#define PROJECTBD_H
+#ifndef DB_H
+#define DB_H
 
 #include <QtSql>
 #include <QDebug>
-#include <map>
-#include <string>
 
-struct Lex {
-    std::string Code;
-    std::string Name;
-    std::string Type;
-
-    std::string operator [](int i) {
-        switch (i) {
-            case 0: {
-                return Code;
-            }
-            case 1: {
-                return Name;
-            }
-            case 2: {
-                return Type;
-            }
-        }
-        return "";
-    }
-};
-
-class ProjectBD {
-private:
+class DB {
+protected:
     QSqlDatabase db;
     QSqlQuery query;
 
     int size;
 
 public:
-    ProjectBD();
-    virtual ~ProjectBD() {}
+    DB(QString);
+    DB();
+    virtual ~DB() {}
 
     //Create database connection
     //Input: -
     //Output: Created or not
     bool createConnection();
+
+    bool CheckConnection();
 
     //Return last error in database
     //Input: -
@@ -52,26 +32,6 @@ public:
     //Input: -
     //Output: size
     int GetSize();
-
-    //Return records from table "ReserveLex"
-    //Input: -
-    //Output: map with records
-    std::map<std::string, std::string> GetReserveLex();
-
-    //Return records from table "Lex"
-    //Input: container for save records
-    //Output: container for save records
-    void GetLex(std::list<Lex>&);
-
-    //Return records from table "ID"
-    //Input: container for save records
-    //Output: container for save records
-    void GetID(std::list<Lex>&);
-
-    //Return record from table "Lex"
-    //Input: -
-    //Output: string with code
-    QString Check_Name();
 
     //Delete records in table
     //Input: table name, definition
@@ -99,8 +59,6 @@ public:
     void CREATE_TABLE(QString, std::vector<std::vector<QString>>);
     void DROP(QString);
 
-    void GetStackNumber(std::vector<int> &);
-    QString GetTerminal();
 };
 
-#endif // PROJECTBD_H
+#endif // DB_H

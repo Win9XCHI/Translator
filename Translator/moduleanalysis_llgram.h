@@ -5,7 +5,8 @@
 #include <algorithm>
 #include <fstream>
 #include <iterator>
-#include "projectbd.h"
+#include "projectdb.h"
+#include "functions.h"
 
 using namespace std;
 
@@ -17,7 +18,7 @@ struct Part {
 };
 
 class ModuleAnalysis_LLGram{
-    ProjectBD DB;
+    ProjectDB *DB;
     map<string, vector<string>> Grammar;
     map<string, vector<vector<Part>>> Rules;
     unsigned int num;
@@ -49,11 +50,9 @@ class ModuleAnalysis_LLGram{
     unsigned int CountVariants(string);
     Part e(vector<unsigned int>);
 
-    template <class Container>
-    static void split3(const std::string& str, Container& cont, char delim = ' ');
-
 public:
     ModuleAnalysis_LLGram();
+    explicit ModuleAnalysis_LLGram(ProjectDB *);
     ~ModuleAnalysis_LLGram();
 
     void UploadGrammar(string path);
@@ -63,6 +62,8 @@ public:
     void ParsingTable();
 
     void ControlOutputVectorRules();
+
+    list<RecordParsingTable> GetTable();
 };
 
 

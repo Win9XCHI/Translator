@@ -17,16 +17,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    db.cpp \
     lexicalanalysis.cpp \
     main.cpp \
     mainwindow.cpp \
-    projectbd.cpp \
+    moduleanalysis_llgram.cpp \
+    projectdb.cpp \
     syntactisanalysis.cpp
 
 HEADERS += \
+    db.h \
+    functions.h \
     lexicalanalysis.h \
     mainwindow.h \
-    projectbd.h \
+    moduleanalysis_llgram.h \
+    projectdb.h \
+    structures.h \
     syntactisanalysis.h
 
 FORMS += \

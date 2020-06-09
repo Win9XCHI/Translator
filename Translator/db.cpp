@@ -1,13 +1,19 @@
-#include "projectbd.h"
+#include "db.h"
 
-ProjectBD::ProjectBD() {
+DB::DB(QString strBase) {
     db = QSqlDatabase::addDatabase("QSQLITE", "SQLITE");
-    db.setDatabaseName("DB.db");
+    db.setDatabaseName(strBase);
     size = 0;
 }
 
+DB::DB() {
+}
 
-bool ProjectBD::createConnection() {
+bool DB::CheckConnection() {
+    return db.isOpen();
+}
+
+bool DB::createConnection() {
     bool connected = db.open();
 
     if (!connected) {
@@ -20,16 +26,16 @@ bool ProjectBD::createConnection() {
     return connected;
 }
 
-QString ProjectBD::LastError() {
+QString DB::LastError() {
     qDebug() <<  query.lastError().text();
     return query.lastError().text();
 }
 
-int ProjectBD::GetSize() {
+int DB::GetSize() {
     return size;
 }
 
-bool ProjectBD::DeleteRecord(QString table_name, QString definition) {
+bool DB::DeleteRecord(QString table_name, QString definition) {
     bool flag = true;
 
     if (table_name != "") {
@@ -48,7 +54,7 @@ bool ProjectBD::DeleteRecord(QString table_name, QString definition) {
     return flag;
 }
 
-bool ProjectBD::SELECT(QString column, QString table, QString definition, QString limit, QString Order_by) {
+bool DB::SELECT(QString column, QString table, QString definition, QString limit, QString Order_by) {
     bool flag = true;
 
     if (table != "" ) {
@@ -104,7 +110,7 @@ bool ProjectBD::SELECT(QString column, QString table, QString definition, QStrin
         return flag;
 }
 
-bool ProjectBD::UPDATE(QString table, QString value, QString definition) {
+bool DB::UPDATE(QString table, QString value, QString definition) {
     bool flag = true;
 
     if (table != "" && value != "") {
@@ -124,49 +130,7 @@ bool ProjectBD::UPDATE(QString table, QString value, QString definition) {
     return flag;
 }
 
-std::map<std::string, std::string> ProjectBD::GetReserveLex() {
-    QSqlRecord rec = query.record();
-    std::map<std::string, std::string> buff;
-
-    while(query.next()) {
-        buff[query.value(rec.indexOf("Name")).toString().toStdString()] = query.value(rec.indexOf("Type")).toString().toStdString();
-    }
-    return buff;
-}
-
-void ProjectBD::GetLex(std::list<Lex> &cont) {
-    QSqlRecord rec = query.record();
-    Lex object;
-
-    while(query.next()) {
-        object.Code = query.value(rec.indexOf("Code")).toString().toStdString();
-        object.Name = query.value(rec.indexOf("Name")).toString().toStdString();
-        object.Type = query.value(rec.indexOf("Type")).toString().toStdString();
-
-        cont.push_back(object);
-    }
-}
-
-void ProjectBD::GetID(std::list<Lex> &cont) {
-    QSqlRecord rec = query.record();
-    Lex object;
-
-    while(query.next()) {
-        object.Code = query.value(rec.indexOf("Code")).toString().toStdString();
-        object.Name = query.value(rec.indexOf("Name")).toString().toStdString();
-        object.Type = query.value(rec.indexOf("Key")).toString().toStdString();
-
-        cont.push_back(object);
-    }
-}
-
-QString ProjectBD::Check_Name() {
-    QSqlRecord rec = query.record();
-    query.next();
-    return query.value(rec.indexOf("Code")).toString();
-}
-
-bool ProjectBD::Insert(QString table_name, std::vector<QString> listColumns, std::vector<QString> listValue) {
+bool DB::Insert(QString table_name, std::vector<QString> listColumns, std::vector<QString> listValue) {
     bool flag = true;
 
     if (table_name != "" && !listValue.empty() && !listColumns.empty()) {
@@ -204,40 +168,25 @@ bool ProjectBD::Insert(QString table_name, std::vector<QString> listColumns, std
     return flag;
 }
 
+void DB::CREATE_TABLE(QString table_name, std::vector<std::vector<QString>> columns) {
+    QString body;
 
+    for (unsigned int i = 0; i < columns.size(); i++) {
 
-//--------------
+        body += "'" + columns[i][0] + "' ";
+        for (unsigned int n = 1; n < columns[i].size(); n++) {
 
-QString ProjectBD::GetMaxNumber() {
-    QSqlRecord rec = query.record();
-    query.next();
-    return query.value(rec.indexOf("Max")).toString();
+            body += columns[i][n] + " ";
+        }
+
+        if (i != columns.size() - 1) {
+            body += ", ";
+        }
+    }
+
+    query.prepare("CREATE TABLE " + table_name + "( " + body + " );");
 }
 
-Lex ProjectBD::GetLex() {
-    QSqlRecord rec = query.record();
-    Lex object;
-
-    query.next();
-    object.Code = query.value(rec.indexOf("Code")).toString().toStdString();
-    object.Name = query.value(rec.indexOf("Name")).toString().toStdString();
-    object.Type = query.value(rec.indexOf("Type")).toString().toStdString();
-
-    return object;
-}
-
-RecordParsingTable ProjectBD::GetTerminal() {
-    QSqlRecord rec = query.record();
-    RecordParsingTable object;
-
-    query.next();
-    object.NumberRecord = query.value(rec.indexOf("Number")).toString().toInt();
-    object.Terminal = query.value(rec.indexOf("Terminal")).toString().toStdString();
-    object.Route = query.value(rec.indexOf("Route")).toString().toInt();
-    object.Accept = query.value(rec.indexOf("Accept")).toString().toInt();
-    object.Stack_In = query.value(rec.indexOf("Stack_In")).toString().toInt();
-    object.Stack_Out = query.value(rec.indexOf("Stack_Out")).toString().toInt();
-    object.Error = query.value(rec.indexOf("Error")).toString().toInt();
-
-    return object;
+void DB::DROP(QString table_name) {
+    query.prepare("DROP TABLE " + table_name + ";");
 }

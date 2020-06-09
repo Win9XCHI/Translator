@@ -6,6 +6,7 @@
 #include <map>
 #include <string>
 
+//---in other file "Models"
 struct Lex {
     std::string Code;
     std::string Name;
@@ -24,6 +25,34 @@ struct Lex {
             }
         }
         return "";
+    }
+
+    bool operator ==(std::vector<std::string> str) {
+        for (unsigned int i = 0; i < str.size(); i++) {
+
+            if (Type == str[i] || Name == str[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    QString ToString() {
+        return QString::fromStdString(Code) + " | " + QString::fromStdString(Name) + " | " + QString::fromStdString(Type);
+    }
+};
+
+struct RecordParsingTable {
+    unsigned int NumberRecord;
+    std::string Terminal;
+    unsigned int Route;
+    bool Accept;
+    unsigned int Stack_In;
+    bool Stack_Out;
+    bool Error;
+
+    QString ToString() {
+        return QString::number(NumberRecord) + " | " + QString::fromStdString(Terminal);
     }
 };
 
@@ -92,6 +121,12 @@ public:
     //Input: table name, columns, values
     //Output: Query done or not
     bool Insert(QString, std::vector<QString>, std::vector<QString>);
+
+
+    //--------
+    QString GetMaxNumber();
+    Lex GetLex();
+    RecordParsingTable GetTerminal();
 
 };
 

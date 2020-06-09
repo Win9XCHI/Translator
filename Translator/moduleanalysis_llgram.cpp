@@ -2,7 +2,14 @@
 #include <iostream>
 
 ModuleAnalysis_LLGram::ModuleAnalysis_LLGram() {
-    DB.createConnection();
+    DB = new ProjectDB("DB.db");
+    if (!DB->CheckConnection()) {
+        DB->createConnection();
+    }
+}
+
+ModuleAnalysis_LLGram::ModuleAnalysis_LLGram(ProjectDB *db) {
+    DB = db;
 }
 
 ModuleAnalysis_LLGram::~ModuleAnalysis_LLGram() {}
@@ -11,7 +18,7 @@ void ModuleAnalysis_LLGram::ConstructRules() {
     vector<string> words;
 
     for (unsigned int i = 0; i < Grammar["Rule"].size(); i++) {
-        ModuleAnalysis_LLGram::split3(Grammar["Rule"][i], words);
+        split3(Grammar["Rule"][i], words);
         vector<Part> parts;
 
         for (unsigned int n = 0; n < words.size(); n++) {
@@ -59,9 +66,9 @@ void ModuleAnalysis_LLGram::UploadGrammar(string path) {
     vector<string> Entry;
     Entry.push_back(entry);
 
-    ModuleAnalysis_LLGram::split3(terminal, Terminal, ',');
-    ModuleAnalysis_LLGram::split3(no_terminal, No_Terminal, ',');
-    ModuleAnalysis_LLGram::split3(rules, Rule, ',');
+    split3(terminal, Terminal, ',');
+    split3(no_terminal, No_Terminal, ',');
+    split3(rules, Rule, ',');
 
     Grammar["Terminal"] = Terminal;
     Grammar["No_Terminal"] = No_Terminal;
@@ -76,9 +83,9 @@ void ModuleAnalysis_LLGram::UploadGrammar(string path) {
 
 //very bad, it created only two tables
 bool ModuleAnalysis_LLGram::CheckGrammar() {
-    DB.DROP("DataVector");
-    DB.DROP("MatrixPredecessors");
-    DB.DROP("MatrixFollowing");
+    DB->DROP("DataVector");
+    DB->DROP("MatrixPredecessors");
+    DB->DROP("MatrixFollowing");
 
     map<string, bool> columns;
     map<string, map<string, bool>> MatrixPredecessors, MatrixFollowing;
@@ -131,7 +138,7 @@ bool ModuleAnalysis_LLGram::CheckGrammar() {
         }
     }
 
-    Following("PROGRAM", MatrixFollowing, MatrixPredecessors);
+    //Following("PROGRAM", MatrixFollowing, MatrixPredecessors);
 
     for (pair<string, bool> item : pattern) {
         cout << item.first << " | ";
@@ -147,17 +154,18 @@ bool ModuleAnalysis_LLGram::CheckGrammar() {
 
     cout << endl;
 
-    //DB.CREATE_TABLE("DataVector", columns);
+    //DB->CREATE_TABLE("DataVector", columns);
     /*columns.clear();
 
     cout << endl;
     for (unsigned int i = 0; i < columnsName.size(); i++) {
         qDebug() << i+1 << ". " << columnsName[i] << " -> " << SEmpty[i];
     }*/
-    //DB.Insert("DataVector", columnsName, SEmpty);
+    //DB->Insert("DataVector", columnsName, SEmpty);
 
-
+    return false;
 }
+
 //n, item->second[i],
 string ModuleAnalysis_LLGram::PartFollowing(unsigned int n, vector<Part> item) {
     for (unsigned int t = n; t < item.size(); t++) {
@@ -226,13 +234,15 @@ void ModuleAnalysis_LLGram::Following(string str, map<string, map<string, bool>>
 map<string, bool> ModuleAnalysis_LLGram::SearchPredecessors(string str, map<string, bool> pattern) {
     auto item = Rules.find(str);
 
-    for (unsigned int i = 0; i < item->second.size(); i++) {
+    if (item != Rules.cend()) {
+        for (unsigned int i = 0; i < item->second.size(); i++) {
 
-        for (unsigned int n = 1; n < item->second[i].size(); n++) {
+            for (unsigned int n = 1; n < item->second[i].size(); n++) {
 
-            pattern[item->second[i][n].Name] = true;
-            if (CheckTerminal(item->second[i][n].Name) || !SearchEmpty(item->second[i][n].Name, "0")) {
-                break;
+                pattern[item->second[i][n].Name] = true;
+                if (CheckTerminal(item->second[i][n].Name) || !SearchEmpty(item->second[i][n].Name, "0")) {
+                    break;
+                }
             }
         }
     }
@@ -244,18 +254,20 @@ bool ModuleAnalysis_LLGram::SearchEmpty(string str, string prevStr) {
     auto item = Rules.find(str);
     bool flag = false;
 
-    for (unsigned int i = 0; i < item->second.size(); i++) {
+    if (item != Rules.cend()) {
+        for (unsigned int i = 0; i < item->second.size(); i++) {
 
-        if (CheckTerminal(item->second[i][item->second[i].size() - 1].Name)) {
-            continue;
-        }
+            if (CheckTerminal(item->second[i][item->second[i].size() - 1].Name)) {
+                continue;
+            }
 
-        if (item->second[i][item->second[i].size() - 1].Name == "e") {
-            return true;
-        }
+            if (item->second[i][item->second[i].size() - 1].Name == "e") {
+                return true;
+            }
 
-        if (!CheckTerminal(item->second[i][item->second[i].size() - 1].Name) && item->second[i][item->second[i].size() - 1].Name != str && item->second[i][item->second[i].size() - 1].Name != prevStr) {
-            flag = SearchEmpty(item->second[i][item->second[i].size() - 1].Name, str);
+            if (!CheckTerminal(item->second[i][item->second[i].size() - 1].Name) && item->second[i][item->second[i].size() - 1].Name != str && item->second[i][item->second[i].size() - 1].Name != prevStr) {
+                flag = SearchEmpty(item->second[i][item->second[i].size() - 1].Name, str);
+            }
         }
     }
 
@@ -343,10 +355,12 @@ unsigned int ModuleAnalysis_LLGram::Numbering(string str, unsigned int number) {
 bool ModuleAnalysis_LLGram::CheckLocationNo_Term(string str, unsigned int number) {
     auto item = Rules.find(str);
 
-    for (unsigned int n = 0; n < item->second.size(); n++) {
+    if (item != Rules.cend()) {
+        for (unsigned int n = 0; n < item->second.size(); n++) {
 
-        if (item->second[n][0].number == number) {
-            return true;
+            if (item->second[n][0].number == number) {
+                return true;
+            }
         }
     }
 
@@ -424,32 +438,34 @@ unsigned int ModuleAnalysis_LLGram::CountVariants(string str) {
 Part ModuleAnalysis_LLGram::SearchTerm(string str, unsigned int number, int i) {
     auto item = Rules.find(str);
 
-    if (i == -1) {
-        return item->second[0][0];
-    }
-    if (CheckTerminal(item->second[i][number].Name) || item->second[i][number].Name == "e") {
-          return item->second[i][number];
-    }
+    if (item != Rules.cend()) {
+        if (i == -1) {
+            return item->second[0][0];
+        }
+        if (CheckTerminal(item->second[i][number].Name) || item->second[i][number].Name == "e") {
+              return item->second[i][number];
+        }
 
-   return SearchTerm(item->second[i][number + 1].Name, number + 1, i);
+        return SearchTerm(item->second[i][number + 1].Name, number + 1, i);
+    }
 
     return Part();
 }
 
 QString ModuleAnalysis_LLGram::SearchTerminalE(unsigned int Stack_pointer) {
-    if (!DB.SELECT("Stack_In", "ParsingTable")) {
+    if (!DB->SELECT("Stack_In", "ParsingTable")) {
         throw "Error DB";
     }
 
     vector<int> cont;
-    DB.GetStackNumber(cont);
+    DB->GetStackNumber(cont);
     QString definition = "Number = " + QString::number(cont[Stack_pointer]);
 
-    if (!DB.SELECT("Terminal", "ParsingTable", definition)) {
+    if (!DB->SELECT("Terminal", "ParsingTable", definition)) {
         throw "Error DB";
     }
 
-    return DB.GetTerminal();
+    return DB->GetTerminal();
 }
 
 void ModuleAnalysis_LLGram::InsertRecord(unsigned int number, QString Terminal, unsigned int Route, bool Accept, unsigned int Stack_In, bool Stack_Out, bool Error) {
@@ -471,7 +487,7 @@ void ModuleAnalysis_LLGram::InsertRecord(unsigned int number, QString Terminal, 
     listValue.push_back(QString::number(Stack_Out));
     listValue.push_back(QString::number(Error));
 
-    DB.Insert("ParsingTable", listColumns, listValue);
+    DB->Insert("ParsingTable", listColumns, listValue);
 }
 
 void ModuleAnalysis_LLGram::ModuleLeft(Part Ob, unsigned int &Stack_pointer) {
@@ -583,7 +599,7 @@ void ModuleAnalysis_LLGram::FillingTable(Part Ob, unsigned int &Stack_pointer) {
 void ModuleAnalysis_LLGram::ParsingTable() {
 
     try {
-        DB.DeleteRecord("ParsingTable");
+        DB->DeleteRecord("ParsingTable");
 
         SortRules();
 
@@ -609,19 +625,6 @@ bool ModuleAnalysis_LLGram::CheckTerminal(string str) {
     return false;
 }
 
-template <class Container>
-void ModuleAnalysis_LLGram::split3(const std::string& str, Container& cont, char delim)
-{
-    std::size_t current, previous = 0;
-    current = str.find(delim);
-    while (current != std::string::npos) {
-        cont.push_back(str.substr(previous, current - previous));
-        previous = current + 1;
-        current = str.find(delim, previous);
-    }
-    cont.push_back(str.substr(previous, current - previous));
-}
-
 void ModuleAnalysis_LLGram::ControlOutputVectorRules() {
 
     cout << endl << "Number         Term\No_term";
@@ -630,4 +633,10 @@ void ModuleAnalysis_LLGram::ControlOutputVectorRules() {
         cout << endl;
         cout << VectorRules[i].number << "          " << VectorRules[i].Name;
     }
+}
+
+list<RecordParsingTable> ModuleAnalysis_LLGram::GetTable() {
+    list<RecordParsingTable> object;
+    DB->GetTerm(object);
+    return object;
 }
