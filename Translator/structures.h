@@ -34,12 +34,22 @@ struct Lex {
     QString ToString() {
         return QString::fromStdString(Code) + " | " + QString::fromStdString(Name) + " | " + QString::fromStdString(Type);
     }
+
+    int SearchIndexLex(std::vector<std::string> str) {
+        for (unsigned int i = 0; i < str.size(); i++) {
+
+            if (Type == str[i] || Name == str[i]) {
+                return i;
+            }
+        }
+        return -1;
+    }
 };
 
 struct RecordParsingTable {
     unsigned int NumberRecord;
     std::string Terminal;
-    unsigned int Route;
+    std::string Route;
     bool Accept;
     unsigned int Stack_In;
     bool Stack_Out;
@@ -54,7 +64,7 @@ struct RecordParsingTable {
                 return Terminal;
             }
             case 2: {
-                return std::to_string(Route);
+                return Route;
             }
             case 3: {
                 return std::to_string(Accept);
