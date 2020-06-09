@@ -1,0 +1,20 @@
+import
+	system.lib;
+execute
+	real mas;
+
+	i16 temp;
+
+	//jkdsfnnbskhbfhlsbhefb
+
+	for i:low(mas)..high(mas) do
+		for j:low(mas)..high(mas) do
+			print(1);
+			end
+		end
+	end
+
+	u = A10h;
+	
+	print("Sorted array");
+end

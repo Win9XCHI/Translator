@@ -133,7 +133,7 @@ void MainWindow::on_pushButton_7_clicked() {
     std::list<RecordParsingTable> listTerm = objectGram->GetTable();
 
     ui->tableWidget_4->setRowCount(listTerm.size());
-    ui->tableWidget_4->setColumnCount(3);
+    ui->tableWidget_4->setColumnCount(7);
 
     for (int i = 0; i < ui->tableWidget_4->rowCount(); i++) {
         for (int n = 0; n < ui->tableWidget_4->columnCount(); n++) {
@@ -144,6 +144,8 @@ void MainWindow::on_pushButton_7_clicked() {
 
         listTerm.pop_front();
     }
+
+    objectGram->ControlOutputVectorRules();
 }
 
 void MainWindow::on_pushButton_8_clicked() {

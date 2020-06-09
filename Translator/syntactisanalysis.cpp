@@ -34,10 +34,6 @@ QString SyntacticAnalysis::Start() {
             vector<string> Terminals;
             split3(State.Terminal, Terminals);
 
-            cout << endl << "Lex: " << lex.Name << ", " << lex.Type;
-            cout << endl << "Terminal: " << State.NumberRecord << ", " << State.Terminal;
-
-
             if (lex == Terminals) {
 
                 if (State.Stack_In != 0) {
@@ -45,11 +41,15 @@ QString SyntacticAnalysis::Start() {
                 }
 
                 if (State.Stack_Out) {
-                    Route = Stack.front();
-                    Stack.pop_front();
+                    if (Stack.size() != 0) {
+                        Route = Stack.front();
+                        Stack.pop_front();
+                    }
                 } else {
 
-                    Route = State.Route;
+                    vector<string> Routes;
+                    split3(State.Route, Routes);
+                    Route = stoi(Routes[lex.SearchIndexLex(Terminals)]);
                 }
 
                 if (State.Accept) {

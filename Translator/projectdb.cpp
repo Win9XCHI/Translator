@@ -73,7 +73,7 @@ RecordParsingTable ProjectDB::GetAllInfoTerminal() {
     query.next();
     object.NumberRecord = query.value(rec.indexOf("Number")).toString().toInt();
     object.Terminal = query.value(rec.indexOf("Terminal")).toString().toStdString();
-    object.Route = query.value(rec.indexOf("Route")).toString().toInt();
+    object.Route = query.value(rec.indexOf("Route")).toString().toStdString();
     object.Accept = query.value(rec.indexOf("Accept")).toString().toInt();
     object.Stack_In = query.value(rec.indexOf("Stack_In")).toString().toInt();
     object.Stack_Out = query.value(rec.indexOf("Stack_Out")).toString().toInt();
@@ -107,7 +107,7 @@ void ProjectDB::GetTerm(std::list<RecordParsingTable> &cont) {
     while(query.next()) {
         object.NumberRecord = query.value(rec.indexOf("Number")).toString().toInt();
         object.Terminal = query.value(rec.indexOf("Terminal")).toString().toStdString();
-        object.Route = query.value(rec.indexOf("Route")).toString().toInt();
+        object.Route = query.value(rec.indexOf("Route")).toString().toStdString();
         object.Accept = query.value(rec.indexOf("Accept")).toString().toInt();
         object.Stack_In = query.value(rec.indexOf("Stack_In")).toString().toInt();
         object.Stack_Out = query.value(rec.indexOf("Stack_Out")).toString().toInt();

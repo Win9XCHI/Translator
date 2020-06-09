@@ -452,7 +452,7 @@ Part ModuleAnalysis_LLGram::SearchTerm(string str, unsigned int number, int i) {
     return Part();
 }
 
-QString ModuleAnalysis_LLGram::SearchTerminalE(unsigned int Stack_pointer) {
+Part ModuleAnalysis_LLGram::SearchTerminalE(unsigned int Stack_pointer) {
     if (!DB->SELECT("Stack_In", "ParsingTable")) {
         throw "Error DB";
     }
@@ -465,10 +465,14 @@ QString ModuleAnalysis_LLGram::SearchTerminalE(unsigned int Stack_pointer) {
         throw "Error DB";
     }
 
-    return DB->GetTerminal();
+    Part Ob;
+    Ob.Name = DB->GetTerminal().toStdString();
+    Ob.number = cont[Stack_pointer];
+
+    return Ob;
 }
 
-void ModuleAnalysis_LLGram::InsertRecord(unsigned int number, QString Terminal, unsigned int Route, bool Accept, unsigned int Stack_In, bool Stack_Out, bool Error) {
+void ModuleAnalysis_LLGram::InsertRecord(unsigned int number, QString Terminal, QString Route, bool Accept, unsigned int Stack_In, bool Stack_Out, bool Error) {
     std::vector<QString> listColumns;
     std::vector<QString> listValue;
     listColumns.push_back("Number");
@@ -481,7 +485,7 @@ void ModuleAnalysis_LLGram::InsertRecord(unsigned int number, QString Terminal, 
 
     listValue.push_back(QString::number(number));
     listValue.push_back(Terminal);
-    listValue.push_back(QString::number(Route));
+    listValue.push_back(Route);
     listValue.push_back(QString::number(Accept));
     listValue.push_back(QString::number(Stack_In));
     listValue.push_back(QString::number(Stack_Out));
@@ -492,15 +496,15 @@ void ModuleAnalysis_LLGram::InsertRecord(unsigned int number, QString Terminal, 
 
 void ModuleAnalysis_LLGram::ModuleLeft(Part Ob, unsigned int &Stack_pointer) {
     bool Accept = false, Stack_Out = false, Error = true;
-    QString Terminal;
-    unsigned int Route(-1), Stack_In = 0;
+    QString Terminal, Route("-1");
+    unsigned int Stack_In = 0;
 
-    Part next = GetNext(Ob.number); //not next
+    Part next = GetNext(Ob.number);
 
     if (CheckTerminal(next.Name)) {
 
         Terminal = QString::fromStdString(next.Name);
-        Route = next.number;
+        Route = QString::number(next.number);
 
         if (CountVariants(Ob.Name) > 1) {
             Error = false;
@@ -508,8 +512,9 @@ void ModuleAnalysis_LLGram::ModuleLeft(Part Ob, unsigned int &Stack_pointer) {
     } else {
 
         if (next.Name == "e") {
-            Terminal = SearchTerminalE(Stack_pointer);
-            Route = next.number;
+            Terminal = QString::fromStdString(SearchTerminalE(Stack_pointer).Name);
+            //Route = QString::number(next.number);
+            Route = QString::number(SearchTerminalE(Stack_pointer).number);
 
             if (CountVariants(Ob.Name) > 1) {
                 Error = false;
@@ -522,11 +527,11 @@ void ModuleAnalysis_LLGram::ModuleLeft(Part Ob, unsigned int &Stack_pointer) {
 
 void ModuleAnalysis_LLGram::ModuleE(Part Ob, unsigned int &Stack_pointer) {
     bool Accept = false, Stack_Out = false, Error = true;
-    QString Terminal;
-    unsigned int Route, Stack_In = 0;
+    QString Terminal, Route;
+    unsigned int Stack_In = 0;
 
-    Terminal = SearchTerminalE(Stack_pointer);
-    Route = 0;
+    Terminal = QString::fromStdString(SearchTerminalE(Stack_pointer).Name);
+    Route = "0";
     Accept = true;
     Stack_Out = true;
 
@@ -537,35 +542,48 @@ void ModuleAnalysis_LLGram::ModuleE(Part Ob, unsigned int &Stack_pointer) {
 
 void ModuleAnalysis_LLGram::ModuleTerminal(Part Ob) {
     bool Accept = false, Stack_Out = false, Error = true;
-    QString Terminal;
-    unsigned int Route, Stack_In = 0;
+    QString Terminal, Route;
+    unsigned int Stack_In = 0;
 
     Terminal = QString::fromStdString(Ob.Name);
-    Route = CheckNext(Ob.number) == "End" ? 0 : Ob.number + 1;
+    Route = CheckNext(Ob.number) == "End" ? "0" : QString::number(Ob.number + 1);
     Accept = true;
+    Stack_Out = CheckNext(Ob.number) == "End" ? true : false;
 
     InsertRecord(Ob.number, Terminal, Route, Accept, Stack_In, Stack_Out, Error);
 }
 
 void ModuleAnalysis_LLGram::ModuleNoTerminal(Part Ob, unsigned int &Stack_pointer) {
     bool Accept = false, Stack_Out = false, Error = true;
-    QString Terminal;
-    unsigned int Route, Stack_In = 0;
+    QString Terminal, Route;
+    unsigned int Stack_In = 0;
 
     unsigned int count = CountVariants(Ob.Name);
     if (count == 0) {
         throw "Zero";
     }
 
-    Route = SearchTerm(Ob.Name, GetNext(Ob.number).number, -1).number;
-
     for (unsigned int i = 0; i < count; i++) {
         QString str = QString::fromStdString(SearchTerm(Ob.Name, 1, i).Name);
+        QString buffRoute = QString::number(SearchTerm(Ob.Name, 1, i).number);
 
         if (str == "e") {
-            Terminal += SearchTerminalE(Stack_pointer) + " ";
+
+            if (i == count - 1) {
+                Terminal += QString::fromStdString(SearchTerminalE(Stack_pointer).Name);
+                Route += QString::number(SearchTerminalE(Stack_pointer).number);
+            } else {
+                Terminal += QString::fromStdString(SearchTerminalE(Stack_pointer).Name) + " ";
+                Route += QString::number(SearchTerminalE(Stack_pointer).number) + " ";
+            }
         } else {
-            Terminal += str + " ";
+            if (i == count - 1) {
+                Terminal += str;
+                Route += buffRoute;
+            } else {
+                Terminal += str + " ";
+                Route += buffRoute + " ";
+            }
         }
     }
 
@@ -627,7 +645,7 @@ bool ModuleAnalysis_LLGram::CheckTerminal(string str) {
 
 void ModuleAnalysis_LLGram::ControlOutputVectorRules() {
 
-    cout << endl << "Number         Term\No_term";
+    cout << endl << "Number         Term / No_term";
 
     for (unsigned int i = 0; i < VectorRules.size(); i++) {
         cout << endl;
@@ -637,6 +655,7 @@ void ModuleAnalysis_LLGram::ControlOutputVectorRules() {
 
 list<RecordParsingTable> ModuleAnalysis_LLGram::GetTable() {
     list<RecordParsingTable> object;
+    DB->SELECT("*", "ParsingTable");
     DB->GetTerm(object);
     return object;
 }

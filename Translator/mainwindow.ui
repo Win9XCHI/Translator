@@ -145,6 +145,11 @@
       <height>171</height>
      </rect>
     </property>
+    <column>
+     <property name="text">
+      <string>Body error</string>
+     </property>
+    </column>
    </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">

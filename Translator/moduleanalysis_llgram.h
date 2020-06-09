@@ -36,9 +36,9 @@ class ModuleAnalysis_LLGram{
     void ModuleE(Part, unsigned int &);
     void ModuleTerminal(Part);
     void ModuleNoTerminal(Part, unsigned int &);
-    QString SearchTerminalE(unsigned int);
+    Part SearchTerminalE(unsigned int);
     Part GetNext(unsigned int);
-    void InsertRecord(unsigned int, QString, unsigned int, bool, unsigned int, bool, bool);
+    void InsertRecord(unsigned int, QString, QString, bool, unsigned int, bool, bool);
 
     string PartFollowing(unsigned int, vector<Part>);
     void Following(string, map<string, map<string, bool>> &, map<string, map<string, bool>>);
@@ -48,8 +48,6 @@ class ModuleAnalysis_LLGram{
     Part NextTerm(string, unsigned int);
     string CheckNext(unsigned int);
     unsigned int CountVariants(string);
-    Part e(vector<unsigned int>);
-
 public:
     ModuleAnalysis_LLGram();
     explicit ModuleAnalysis_LLGram(ProjectDB *);
